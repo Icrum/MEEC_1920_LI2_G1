@@ -6,19 +6,17 @@ from PIL import Image
 lbph = cv2.face.LBPHFaceRecognizer_create(2, 2, 7, 7, 15)
 
 def getImagemComId():
-    caminhos = [os.path.join('Dataset', f) for f in os.listdir('Dataset')]
+    path = [os.path.join('Dataset', f) for f in os.listdir('Dataset')]
     faces = []
     ids = []
-    for caminhoImagem in caminhos:
-        imagemFace = Image.open(caminhoImagem).convert('L')
-       # imagemFace = cv2.cvtColor(cv2.imread(caminhoImagem), cv2.COLOR_BGR2GRAY)
+    for pathImg in path:
+        imagemFace = Image.open(pathImg).convert('L')
         imagemFace = imagemFace.resize((220, 220))
         imagemFace = np.array(imagemFace, 'uint8')
-        id = int(os.path.split(caminhoImagem)[1].split('_')[0].replace("G", ""))
+        id = int(os.path.split(pathImg)[1].split('_')[0].replace("G", ""))
         print(id)
         ids.append(id)
         faces.append(imagemFace)
-        #cv2.imshow("Face", imagemFace)
         cv2.waitKey(10)
     return np.array(ids), faces
 

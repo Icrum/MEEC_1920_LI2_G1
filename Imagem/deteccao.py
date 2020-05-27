@@ -16,11 +16,11 @@ camera = cv2.VideoCapture(0)
 while (True):
     connected, img = camera.read()
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    facesDetectadas = detectorFace.detectMultiScale(imgGray, 1.3, 5)
-    for (x, y, l, a) in facesDetectadas:
+    facesDetected = detectorFace.detectMultiScale(imgGray, 1.3, 5)
+    for (x, y, l, a) in facesDetected:
         imgFace = cv2.resize(imgGray[y:y + a, x:x + l], (largura, altura))
         cv2.rectangle(img, (x, y), (x + l, y + a), (0,0,255), 2)
-        id, accuracy = classifier.predict(imgFace) #cropped image
+        id, confidence = classifier.predict(imgFace) #cropped image
         nome = ""
         if id == 1:
             nome = 'Claudia'
@@ -28,7 +28,7 @@ while (True):
             nome = 'Not Claudia'
 
         cv2.putText(img, nome, (x,y +(a+30)), font, 1 , (255, 0, 133))
-        cv2.putText(img, str(accuracy), (x,y + (a+70)), font, 1 , (0 ,0 ,255))
+        cv2.putText(img, str(confidence), (x,y + (a+70)), font, 1 , (255 ,0 ,0))
 
     cv2.imshow("Recognition LBPH", img)
     if cv2.waitKey(1) == ord('q'):
