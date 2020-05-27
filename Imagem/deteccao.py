@@ -8,9 +8,10 @@ classifier = cv2.face.LBPHFaceRecognizer_create(2,2,7,7,15)
 
 classifier.read("classifierLBPH.yml") #classifier
 
+font = cv2.FONT_HERSHEY_DUPLEX
+
 largura, altura = 220, 220
 
-font = cv2.FONT_HERSHEY_DUPLEX
 camera = cv2.VideoCapture(0)
 
 while (True):
@@ -28,7 +29,7 @@ while (True):
             nome = 'Not Claudia'
 
         cv2.putText(img, nome, (x,y +(a+30)), font, 1 , (255, 0, 133))
-        cv2.putText(img, str(confidence), (x,y + (a+70)), font, 1 , (255 ,0 ,0))
+        cv2.putText(img, str(round(confidence,2)), (x,y + (a+70)), font, 1 , (255 ,0 ,0))
 
     cv2.imshow("Recognition LBPH", img)
     if cv2.waitKey(1) == ord('q'):
