@@ -26,7 +26,7 @@ filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\tr
 mlp = pickle.load(open(filename,"rb"))
 
 mlp_cmd = MLPClassifier()
-filename_cmd = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_person.bin"
+filename_cmd = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_command.bin"
 mlp_cmd = pickle.load(open(filename_cmd,"rb"))
 
 grupo = ("G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")
@@ -34,7 +34,7 @@ command = ("parar", "recuar", "direita", "esquerda", "baixo", "centro", "cima", 
 
 def get_audio ():
 
-    signal, sample_rate = librosa.load("E:\GoogleDrive\MestradoEEC\LabInt_2\MEEC_1920_LI2_G1\AudioDatasetRec\G3\G3_Baixo_1.wav", sr=RATE)
+    signal, sample_rate = librosa.load("E:\GoogleDrive\MestradoEEC\LabInt_2\MEEC_1920_LI2_G1\AudioDatasetRec\G1\G1_Recuar_12.wav", sr=RATE)
     # p = pyaudio.PyAudio()
     #
     # stream = p.open(format=FORMAT,
@@ -83,16 +83,16 @@ def prev_result (X_person, X_cmd):
     return result, result_cmd
 
 
-def prep_data_cmd(signal):
+def prep_data_cmd(clip_audio):
     W = []
     result = np.array([])
 
-    mfcc = np.mean(librosa.feature.mfcc(signal, sr=RATE, n_mfcc=13, n_fft=2048, hop_length=512).T, axis=0)
+    mfcc = np.mean(librosa.feature.mfcc(clip_audio, sr=RATE, n_mfcc=13, n_fft=2048, hop_length=512).T, axis=0)
     result = np.hstack((result, mfcc))
-    stft = np.abs(librosa.stft(signal))
+    stft = np.abs(librosa.stft(clip_audio))
     chroma = np.mean(librosa.feature.chroma_stft(S=stft, sr=RATE).T, axis=0)
     result = np.hstack((result, chroma))
-    mel = np.mean(librosa.feature.melspectrogram(signal, sr=RATE).T, axis=0)
+    mel = np.mean(librosa.feature.melspectrogram(clip_audio, sr=RATE).T, axis=0)
     result = np.hstack((result, mel))
     W.append(result)
 
