@@ -6,7 +6,7 @@ import sys
 import sounddevice as sd
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
-from PyQt5 import  QtWidgets
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 CHUNK = 2048
