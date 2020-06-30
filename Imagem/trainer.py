@@ -41,17 +41,17 @@ for i in range(len(X_test)):
     Y_predict[i] = a[0]
 
 cm = metrics.confusion_matrix(Y_test, Y_predict, labels=[1, 2, 3, 4, 5, 6, 7, 8])
-print("Confusion Matrix:")
+print("\nConfusion Matrix:")
 print(cm)
 
-prfs = metrics.precision_recall_fscore_support(Y_test, Y_predict)
-print("Precision Recall F-score Support:")
-print(prfs)
+#prfs = metrics.precision_recall_fscore_support(Y_test, Y_predict)
+#print("Precision Recall F-score Support:")
+#print(prfs)
 
-accuracy = metrics.accuracy_score(Y_test, Y_predict)
-print("Accuracy:")
-print(accuracy)
+#accuracy = metrics.accuracy_score(Y_test, Y_predict)
+#print("Accuracy:")
+#print(accuracy)
 
 cr = metrics.classification_report(Y_test, Y_predict)
-print("Classification Report:")
+print("\nClassification Report:")
 print(cr)
