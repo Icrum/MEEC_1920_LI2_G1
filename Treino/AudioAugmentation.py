@@ -1,6 +1,10 @@
 import librosa
 import numpy as np
-import matplotlib.pyplot as plt
+import pyaudio
+import soundfile as sf
+
+p = pyaudio.PyAudio()
+
 
 def detect_leading_silence(sound, silence_threshold=0.005):
     trim_ms = 0  # ms
@@ -10,11 +14,12 @@ def detect_leading_silence(sound, silence_threshold=0.005):
 
     return trim_ms
 
+
 class AudioAugmentation:
 
-    def read_audio_file(self, file_path, SAMPLE_RATE, Segundos):
-        input_length = SAMPLE_RATE * Segundos
-        data = librosa.core.load(file_path)[0]
+    def read_audio_file(self, file_path, sample_rate, segundos):
+        input_length = sample_rate * segundos
+        data, samplerate = sf.read(file_path)
 
         trimSignalInicio = detect_leading_silence(data)
         trimSignalFinal = detect_leading_silence(np.flip(data))
@@ -22,21 +27,12 @@ class AudioAugmentation:
         duration = len(data)
         trimmed_sound = data[trimSignalInicio:(duration - trimSignalFinal)]
 
-
-
         if len(trimmed_sound) < input_length:
-            sinalOut = np.pad(trimmed_sound, (0, max(0, int(input_length - len(trimmed_sound)))), "constant")
+            sinalout = np.pad(trimmed_sound, (0, max(0, int(input_length - len(trimmed_sound)))), "constant")
 
-            # if int(input_length - len(trimmed_sound)) < adicaoMin:
-            #     adicaoMin = int(input_length - len(trimmed_sound))
-            # print("Tamanho trimmed: ", len(trimmed_sound))
-            # print("Maximo ficheiro: ", max(sinalOut))
-            # print("Tamanho ficheiro: ", len(sinalOut))
-            # print("valor adicionado: ", adicaoMin)
-        return sinalOut, int(input_length - len(trimmed_sound))
+        return sinalout
 
     def add_noise(self, data, a):
-        # np.random.seed(a)
         noise = np.random.randn(len(data))
         data_noise = data + 0.005 * noise
         return data_noise
@@ -52,4 +48,3 @@ class AudioAugmentation:
         else:
             data = np.pad(data, (0, max(0, input_length - len(data))), "constant")
         return data
-

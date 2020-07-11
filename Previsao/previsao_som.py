@@ -4,27 +4,35 @@ import pyaudio
 import numpy as np
 import sys
 import sounddevice as sd
+import soundfile as sf
 import matplotlib.pyplot as plt
 import librosa.display
 import time
+import wave
+import struct
+import scipy.signal as sps
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
+from scipy.io.wavfile import write
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QSizePolicy
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+from sklearn.metrics import classification_report, confusion_matrix
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 
-CHUNK = 2048
 FORMAT = pyaudio.paInt16
-CHANNELS = 2
+CHANNELS = 1
 RATE = 44100
+CHUNK = 2048
 RECORD_SECONDS = 2.3
-# seconds = 0.5
 
 scaler = StandardScaler()
 scaler_filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_person.bin"
 scaler = pickle.load(open(scaler_filename,"rb"))
-
 scaler_cmd = StandardScaler()
 scaler_cmd_filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_command.bin"
 scaler_cmd = pickle.load(open(scaler_cmd_filename,"rb"))
@@ -32,7 +40,6 @@ scaler_cmd = pickle.load(open(scaler_cmd_filename,"rb"))
 mlp = MLPClassifier()
 filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_person.bin"
 mlp = pickle.load(open(filename,"rb"))
-
 mlp_cmd = MLPClassifier()
 filename_cmd = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_command.bin"
 mlp_cmd = pickle.load(open(filename_cmd,"rb"))
@@ -41,25 +48,20 @@ grupo = ("G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "Desc")
 command = ("parar", "recuar", "direita", "esquerda", "baixo", "centro", "cima", "avançar", "Desc")
 
 
-class MplCanvas(FigureCanvasQTAgg):
-
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot(111)
-        super(MplCanvas, self).__init__(fig)
-
 class AudioHandler(object):
     def __init__(self):
-        self.FORMAT = pyaudio.paFloat32
-        self.CHANNELS = 1
-        self.RATE = 44100
-        self.CHUNK = 1024 * 2
+        self.FORMAT = FORMAT
+        self.CHANNELS = CHANNELS
+        self.RATE = RATE
+        self.CHUNK = CHUNK
         self.p = None
         self.stream = None
         self.numpy_array = []
-        self.frames = []
+        self.numpy_arr = []
+        # self.frames = []
         self.result = 8
         self.result_cmd = 8
+        self.framesSize = 0
 
     def start(self):
         self.p = pyaudio.PyAudio()
@@ -72,24 +74,36 @@ class AudioHandler(object):
                                   frames_per_buffer=self.CHUNK)
 
     def stop(self):
+        self.stream.stop_stream()
         self.stream.close()
         self.p.terminate()
 
     def callback(self, in_data, frame_count, time_info, flag):
-        self.numpy_array = np.frombuffer(in_data, dtype=np.float16)
-        # librosa.feature.mfcc(numpy_array)
+        self.numpy_array.append(in_data)
         return None, pyaudio.paContinue
 
     def mainloop(self):
         while (self.stream.is_active()): # if using button you can set self.stream to 0 (self.stream = 0), otherwise you can use a stop condition
 
-            npSize = len(self.numpy_array)
+            self.npSize = len(self.numpy_array)
 
-            if npSize >= RATE*RECORD_SECONDS:
-                self.frames.append(self.numpy_array[npSize-(RATE*RECORD_SECONDS):npSize])
-                X_person = prep_data(self.frames)
-                X_cmd = prep_data_cmd(self.frames)
-                result, result_cmd = prev_result(X_person, X_cmd)
+            if self.npSize >= RATE*RECORD_SECONDS/self.CHUNK:
+
+                self.frames = self.numpy_array[int(self.npSize-(RATE*RECORD_SECONDS/(self.CHUNK))):]
+
+                # Save the recorded data as a WAV file
+                wf = wave.open("temp.wav", 'wb')
+                wf.setnchannels(1)
+                wf.setsampwidth(self.p.get_sample_size(FORMAT))
+                wf.setframerate(RATE)
+                wf.writeframes(b''.join(self.frames))
+                wf.close()
+
+                # Leitura do ficeiro para teste
+                self.data, self.samplerate = sf.read("temp.wav")
+                self.X_person = prep_data(self.data)
+                self.X_cmd = prep_data_cmd(self.data)
+                self.result, self.result_cmd = prev_result(self.X_person, self.X_cmd)
             else:
                 time.sleep(0.2)
 
@@ -99,24 +113,24 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow,self).__init__()
         self.initUI()
+        self.audio = AudioHandler()
+
 
     def button_clicked(self):
-        audio = AudioHandler()
-        audio.start()  # open the the stream
-        result, result_cmd = audio.mainloop()  # main operations with librosa
-        # audio.stop()
+        # audio = AudioHandler()
+        self.audio.start()  # open the the stream
+        while True:
+            self.result, self.result_cmd = self.audio.mainloop()  # main operations with librosa
 
-        # clip_audio, sample_rate = get_audio()
-        # show_graf(clip_audio, RATE)
+            print(grupo[self.result])
+            print(command[self.result_cmd])
+            self.user.setText(grupo[self.result])
+            self.comando.setText(command[self.result_cmd])
 
-        # X_person = prep_data(clip_audio)
-        # X_cmd = prep_data_cmd(clip_audio)
-        # result, result_cmd = prev_result(X_person, X_cmd)
+            time.sleep(0.2)
 
-        self.user.setText(grupo[result])
-        self.comando.setText(command[result_cmd])
-        print(result)
-        print(result_cmd)
+    def button_clickedParar(self):
+        self.audio.stop()
 
     def initUI(self):
         self.setGeometry(500, 100, 800, 600)
@@ -126,14 +140,14 @@ class MyWindow(QMainWindow):
         self.label.setText("Utilizador: ")
         self.label.move(150,550)
         self.user = QtWidgets.QLabel(self)
-        self.user.setText(" ")
+        self.user.setText("Desc")
         self.user.move(250, 550)
 
         self.label_2 = QtWidgets.QLabel(self)
         self.label_2.setText("Comando: ")
         self.label_2.move(400, 550)
         self.comando = QtWidgets.QLabel(self)
-        self.comando.setText(" ")
+        self.comando.setText("Desc")
         self.comando.move(500, 550)
 
         self.b1 = QtWidgets.QPushButton(self)
@@ -141,71 +155,45 @@ class MyWindow(QMainWindow):
         self.b1.clicked.connect(self.button_clicked)
         self.b1.move(10, 550)
 
-    def update(self):
-        self.label.adjustSize()
-        
-        
-def show_graf(clip_audio, sample_rate):
-    # sc = MplCanvas(MyWindow, width=5, height=4, dpi=100)
-    # sc.axes(clip_audio)
-    # MyWindow.setCentralWidget(sc)
-    # MyWindow.show()
-    pass
+        self.b2 = QtWidgets.QPushButton(self)
+        self.b2.setText("Parar")
+        self.b2.clicked.connect(self.button_clickedParar)
+        self.b2.move(10, 575)
+
+        m = PlotCanvas(self, width=5, height=2)
+        m.move(0, 0)
+
+    # def update(self):
+    #     self.label.adjustSize()
+
+class PlotCanvas(FigureCanvas):
+
+    def __init__(self, parent=None, width=5, height=1, dpi=80):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = fig.add_subplot(111)
+
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+
+        FigureCanvas.setSizePolicy(self,
+                QSizePolicy.Expanding,
+                QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plot()
+
+
+    def plot(self):
+        self.data, self.samplerate = sf.read("temp.wav")
+        ax = self.figure.add_subplot(111)
+        ax.plot(self.data, 'r-')
+        ax.set_title('Som')
+        self.draw()
     
 def window():
     app = QApplication(sys.argv)
     win = MyWindow()
     win.show()
     sys.exit(app.exec_())
-
-def get_audio():
-    # Source file
-    # signal, sample_rate = librosa.core.load("E:\GoogleDrive\MestradoEEC\LabInt_2\MEEC_1920_LI2_G1\AudioDatasetRec\G1\G1_Esquerda_1.wav", sr=RATE)
-    # plt.subplot(211)
-    # plt.plot(signal)
-    # # plt.xlabel('Tempo')
-    # plt.ylabel('Amplitude')
-    # plt.subplot(212)
-    # powerSpectrum, freqenciesFound, time, imageAxis = plt.specgram(signal, Fs=sample_rate)
-    # plt.xlabel('Tempo')
-    # plt.ylabel('Frequência')
-    # plt.show()
-
-    #Source stream
-    p = pyaudio.PyAudio()
-
-    stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
-    print("* recording")
-
-    frames = []
-    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-        data = stream.read(CHUNK)
-        frames.append(data)
-    print("* done recording")
-
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-
-    print("A detetar!")
-    # signal = sd.RawStream(device=None, samplerate=RATE, channels=1, blocksize=int(RATE/CHUNK * RECORD_SECONDS))
-    # signal = sd.rec(int(RECORD_SECONDS * RATE), samplerate=RATE, channels=2)
-    # sd.wait()
-    # signal, sample_rate = librosa.core.load(frames)
-    signal = librosa.to_mono(frames)
-    print("A processar!")
-    plt.subplot(211)
-    plt.plot(signal)
-    # plt.xlabel('Tempo')
-    plt.ylabel('Amplitude')
-    plt.subplot(212)
-    powerSpectrum, freqenciesFound, time, imageAxis = plt.specgram(signal, Fs=RATE)
-    plt.xlabel('Tempo')
-    plt.ylabel('Frequência')
-    plt.show()
-
-    return signal, RATE
-
 
 def prep_data (clip_audio):
     mfcc = np.mean(librosa.feature.mfcc(clip_audio, sr=RATE, n_mfcc=13, n_fft=2048, hop_length=512).T,axis=0)
@@ -232,11 +220,18 @@ def prep_data_cmd(clip_audio):
 
 def prev_result (X_person, X_cmd):
     predictions = mlp.predict(X_person)
+    a = predictions.item(0)
+    # predP = mlp.predict_proba(X_person)
+    # print(mlp.predict_proba(X_person))
+
+
     predictions_cmd = mlp_cmd.predict(X_cmd)
-    result = grupo[int(predictions)]
-    result_cmd = command[int(predictions_cmd)]
-    return result, result_cmd
+    b = predictions_cmd.item(0)
+    # result = grupo[int(predictions)]
+    # result_cmd = command[int(predictions_cmd)]
+    # print(mlp.predict_proba(X_cmd))
+    return a, b
 
 if __name__ == "__main__":
-    # print(sd.query_devices())
+    print(sd.query_devices())
     window()
