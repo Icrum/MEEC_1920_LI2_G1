@@ -83,7 +83,7 @@ class AudioHandler(object):
         return None, pyaudio.paContinue
 
     def mainloop(self):
-        while (self.stream.is_active()): # if using button you can set self.stream to 0 (self.stream = 0), otherwise you can use a stop condition
+        # while (self.stream.is_active()): # if using button you can set self.stream to 0 (self.stream = 0), otherwise you can use a stop condition
 
             self.npSize = len(self.numpy_array)
 
@@ -113,19 +113,20 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow,self).__init__()
         self.initUI()
-        self.audio = AudioHandler()
+        # self.audio = AudioHandler()
 
 
     def button_clicked(self):
-        # audio = AudioHandler()
+        self.audio = AudioHandler()
         self.audio.start()  # open the the stream
         while True:
             self.result, self.result_cmd = self.audio.mainloop()  # main operations with librosa
 
-            print(grupo[self.result])
-            print(command[self.result_cmd])
-            self.user.setText(grupo[self.result])
-            self.comando.setText(command[self.result_cmd])
+            if(type(self.result)==str):
+                print(type(self.result))
+                print(type(self.result_cmd))
+                self.user.setText(self.result)
+                self.comando.setText(self.result_cmd)
 
             time.sleep(0.2)
 
@@ -221,16 +222,30 @@ def prep_data_cmd(clip_audio):
 def prev_result (X_person, X_cmd):
     predictions = mlp.predict(X_person)
     a = predictions.item(0)
-    # predP = mlp.predict_proba(X_person)
-    # print(mlp.predict_proba(X_person))
 
+    confianca = mlp.predict_proba(X_cmd)
+    if (confianca.item(0) > 0.6):
+        resultado = grupo[a]
+    else:
+        resultado = "Desc"
+
+    print(resultado)
+    print(confianca.item(0))
 
     predictions_cmd = mlp_cmd.predict(X_cmd)
     b = predictions_cmd.item(0)
-    # result = grupo[int(predictions)]
-    # result_cmd = command[int(predictions_cmd)]
-    # print(mlp.predict_proba(X_cmd))
-    return a, b
+
+    confiancacmd = mlp.predict_proba(X_cmd)
+    if (confiancacmd.item(1)>0.6):
+        resultadoCmd = command[b]
+    else:
+        resultadoCmd = "Desc"
+
+    print(resultadoCmd)
+    print(confiancacmd.item(1))
+
+
+    return resultado, resultadoCmd
 
 if __name__ == "__main__":
     print(sd.query_devices())
