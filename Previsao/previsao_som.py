@@ -99,7 +99,7 @@ class AudioHandler(object):
                 wf.writeframes(b''.join(self.frames))
                 wf.close()
 
-                # Leitura do ficeiro para teste
+                # Leitura do ficheiro para teste
                 self.data, self.samplerate = sf.read("temp.wav")
                 self.X_person = prep_data(self.data)
                 self.X_cmd = prep_data_cmd(self.data)
