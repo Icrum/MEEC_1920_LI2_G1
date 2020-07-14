@@ -3,10 +3,11 @@ import soundfile as sf
 from PyQt5 import QtWidgets, uic, QtGui
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import QTimer, qVersion
-
+from Previsao.previsao_som import AudioHandler
 import numpy as nd
 
 import cv2
+import time
 import os
 from PIL import Image
 import numpy as np
@@ -19,13 +20,20 @@ import matplotlib.pyplot as plt
 classifier = cv2.face.LBPHFaceRecognizer_create()
 
 classifier.read("E:\GoogleDrive\MestradoEEC\LabInt_2\MEEC_1920_LI2_G1\Imagem\classifierLBPH.yml") #classifier
-
+ah = AudioHandler()
 
 def img2pixmap(image):
     height, width, channel = image.shape
     bytesPerLine = channel * width
     qimage = QImage(image.data, width, height, bytesPerLine, QImage.Format_BGR888)
     pixmap = QPixmap.fromImage(qimage)
+    return pixmap
+
+def img3pixmap(image):
+    # height, width, channel = image.shape
+    # bytesPerLine = channel * width
+    # qimage = QImage(image, 400, 100, QImage.Format_BGR888)
+    pixmap = QPixmap.fromImage(image)
     return pixmap
 
 
@@ -42,6 +50,9 @@ def rec_lbph_window():
     font = cv2.FONT_HERSHEY_DUPLEX
 
     largura, altura = 220, 220
+
+    # Inicia o stream de audio
+    ah.start()
 
     #camera = cv2.VideoCapture(0)
 
@@ -63,10 +74,21 @@ def rec_lbph_window():
             cv2.putText(img, str(round(confidence, 2)), (x, y + (a + 70)), font, 1, (255, 0, 0))
 
         window.Video.setPixmap(img2pixmap(img))
-        data, samplerate = sf.read("Previsao/temp.wav")
-        graph = plt.plot(data)
-        window.graph1.setPixmap(img2pixmap(graph))
-        # cv2.imshow("Recognition LBPH", img)
+        # data, samplerate = sf.read("Previsao/temp.wav")
+        # # Pxx, freqs, bins, im = plt.specgram(data, NFFT=2048, Fs=samplerate, noverlap=900)
+        # graph = plt.plot(data)
+        # window.graph1.setPixmap(graph)
+        # # cv2.imshow("Recognition LBPH", img)
+
+        # Previsão Som
+        grupo, comando = ah.mainloop()
+        if (type(grupo) == str) and grupo != " ":
+            window.Pessoa.setText(grupo)
+        if (type(comando) == str) and comando != " ":
+            window.Comando.setText(comando)
+
+        time.sleep(0.1)
+
 
 
         if cv2.waitKey(1) == ord('q'):

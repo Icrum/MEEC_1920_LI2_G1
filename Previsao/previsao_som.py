@@ -46,8 +46,6 @@ mlp_cmd = pickle.load(open(filename_cmd,"rb"))
 
 grupo = ("G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "Desc")
 command = ("parar", "recuar", "direita", "esquerda", "baixo", "centro", "cima", "avançar", "Desc")
-resultado = " "
-resultadoCmd = " "
 
 class AudioHandler(object):
     def __init__(self):
@@ -73,6 +71,7 @@ class AudioHandler(object):
                                   output=False,
                                   stream_callback=self.callback,
                                   frames_per_buffer=self.CHUNK)
+
 
     def stop(self):
         self.stream.stop_stream()
@@ -109,6 +108,7 @@ class AudioHandler(object):
                 time.sleep(0.2)
 
             return self.result, self.result_cmd
+
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -168,6 +168,7 @@ class MyWindow(QMainWindow):
     # def update(self):
     #     self.label.adjustSize()
 
+
 class PlotCanvas(FigureCanvas):
 
     def __init__(self, parent=None, width=5, height=1, dpi=80):
@@ -190,12 +191,14 @@ class PlotCanvas(FigureCanvas):
         ax.plot(self.data, 'r-')
         ax.set_title('Som')
         self.draw()
-    
+
+
 def window():
     app = QApplication(sys.argv)
     win = MyWindow()
     win.show()
     sys.exit(app.exec_())
+
 
 def prep_data (clip_audio):
     mfcc = np.mean(librosa.feature.mfcc(clip_audio, sr=RATE, n_mfcc=13, n_fft=2048, hop_length=512).T,axis=0)
@@ -203,6 +206,7 @@ def prep_data (clip_audio):
     X.append(mfcc)
     X_person = scaler.transform(X)
     return X_person
+
 
 def prep_data_cmd(clip_audio):
     W = []
@@ -220,7 +224,9 @@ def prep_data_cmd(clip_audio):
     X_cmd = scaler_cmd.transform(W)
     return X_cmd
 
+
 def prev_result (X_person, X_cmd):
+
     predictions = mlp.predict(X_person)
     a = predictions.item(0)
 
@@ -229,6 +235,7 @@ def prev_result (X_person, X_cmd):
         resultado = grupo[a]
     else:
         resultado = " "
+
 
     print(resultado)
     print(confianca.item(0))
@@ -247,6 +254,7 @@ def prev_result (X_person, X_cmd):
 
 
     return resultado, resultadoCmd
+
 
 if __name__ == "__main__":
     print(sd.query_devices())
