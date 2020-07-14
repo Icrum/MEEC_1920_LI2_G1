@@ -151,7 +151,7 @@ class MyWindow(QMainWindow):
         self.comando.move(500, 550)
 
         self.b1 = QtWidgets.QPushButton(self)
-        self.b1.setText("Iniciar")
+        self.b1.setText("Iniciar.")
         self.b1.clicked.connect(self.button_clicked)
         self.b1.move(10, 550)
 
