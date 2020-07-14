@@ -19,8 +19,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QSizePolicy
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from sklearn.metrics import classification_report, confusion_matrix
-from pyqtgraph import PlotWidget, plot
-import pyqtgraph as pg
+#from pyqtgraph import PlotWidget, plot
+#import pyqtgraph as pg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 

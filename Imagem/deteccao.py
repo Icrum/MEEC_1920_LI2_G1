@@ -4,7 +4,7 @@ import cv2
 detectorFace = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
 #LBPH Features
-classifier = cv2.face.LBPHFaceRecognizer_create(2,2,7,7,15)
+classifier = cv2.face.LBPHFaceRecognizer_create()
 
 classifier.read("classifierLBPH.yml") #classifier
 

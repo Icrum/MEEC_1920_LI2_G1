@@ -14,6 +14,7 @@ def getImageWithId():
     ids = []
     for pathImg in path:
         imgFace = Image.open(pathImg).convert('L')  # gray
+       # imgFace = imgFace.resize((220, 220))
         imgNP = np.array(imgFace, 'uint8')
         id = int(os.path.split(pathImg)[1].split('_')[0].replace("G", ""))
         #print(id)
@@ -47,10 +48,6 @@ print(cm)
 #prfs = metrics.precision_recall_fscore_support(Y_test, Y_predict)
 #print("Precision Recall F-score Support:")
 #print(prfs)
-
-#accuracy = metrics.accuracy_score(Y_test, Y_predict)
-#print("Accuracy:")
-#print(accuracy)
 
 cr = metrics.classification_report(Y_test, Y_predict)
 print("\nClassification Report:")
