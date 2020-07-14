@@ -31,17 +31,17 @@ CHUNK = 2048
 RECORD_SECONDS = 2.3
 
 scaler = StandardScaler()
-scaler_filename = "E:\\GoogleDrive\\MestradoEEC\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_person.bin"
+scaler_filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_person.bin"
 scaler = pickle.load(open(scaler_filename,"rb"))
 scaler_cmd = StandardScaler()
-scaler_cmd_filename = "E:\\GoogleDrive\\MestradoEEC\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_command.bin"
+scaler_cmd_filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_command.bin"
 scaler_cmd = pickle.load(open(scaler_cmd_filename,"rb"))
 
 mlp = MLPClassifier()
-filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\MEEC_1920_LI2_G1\\Treino\\trained_model_person.bin"
+filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_person.bin"
 mlp = pickle.load(open(filename,"rb"))
 mlp_cmd = MLPClassifier()
-filename_cmd = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\MEEC_1920_LI2_G1\\Treino\\trained_model_command.bin"
+filename_cmd = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_command.bin"
 mlp_cmd = pickle.load(open(filename_cmd,"rb"))
 
 grupo = ("G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "Desc")
@@ -99,7 +99,7 @@ class AudioHandler(object):
                 wf.writeframes(b''.join(self.frames))
                 wf.close()
 
-                # Leitura do ficeiro para teste
+                # Leitura do ficheiro para teste
                 self.data, self.samplerate = sf.read("temp.wav")
                 self.X_person = prep_data(self.data)
                 self.X_cmd = prep_data_cmd(self.data)
@@ -151,7 +151,7 @@ class MyWindow(QMainWindow):
         self.comando.move(500, 550)
 
         self.b1 = QtWidgets.QPushButton(self)
-        self.b1.setText("Iniciar.")
+        self.b1.setText("Iniciar")
         self.b1.clicked.connect(self.button_clicked)
         self.b1.move(10, 550)
 
