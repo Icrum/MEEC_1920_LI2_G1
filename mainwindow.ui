@@ -45,6 +45,9 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -53,7 +56,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="labelEST">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -147,6 +150,9 @@
               </item>
               <item>
                <widget class="QLabel" name="Pessoa">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
@@ -154,6 +160,9 @@
               </item>
               <item>
                <widget class="QLabel" name="Comando">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
@@ -178,6 +187,9 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="text">
          <string/>

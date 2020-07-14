@@ -14,7 +14,7 @@ def getImageWithId():
     ids = []
     for pathImg in path:
         imgFace = Image.open(pathImg).convert('L')  # gray
-       # imgFace = imgFace.resize((220, 220))
+        #imgFace = imgFace.resize((220, 220))
         imgNP = np.array(imgFace, 'uint8')
         id = int(os.path.split(pathImg)[1].split('_')[0].replace("G", ""))
         #print(id)
@@ -44,10 +44,6 @@ for i in range(len(X_test)):
 cm = metrics.confusion_matrix(Y_test, Y_predict, labels=[1, 2, 3, 4, 5, 6, 7, 8])
 print("\nConfusion Matrix:")
 print(cm)
-
-#prfs = metrics.precision_recall_fscore_support(Y_test, Y_predict)
-#print("Precision Recall F-score Support:")
-#print(prfs)
 
 cr = metrics.classification_report(Y_test, Y_predict)
 print("\nClassification Report:")

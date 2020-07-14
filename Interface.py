@@ -12,12 +12,12 @@ import numpy as np
 from PyQt5.QtWidgets import QFileDialog
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
-import pandas as pd
 import matplotlib.pyplot as plt
 
-classifier = cv2.face.LBPHFaceRecognizer_create()
 
-classifier.read("classifierLBPH.yml") #classifier
+#classifier = cv2.face.LBPHFaceRecognizer_create()
+
+#classifier.read(r"C:\Users\perei\PycharmProjects\MEEC_1920_LI2_G1\Imagem\classifierLBPH.yml") #classifier
 
 """
 def img2pixmap(image):
@@ -30,17 +30,19 @@ def img2pixmap(image):
 
 # Reconhecimento pela Webcam
 def rec_lbph_window():
-
+    #camera = cv2.VideoCapture(0)
     if not camera.isOpened():
         camera.open(0)
-        window.video.setText("Turning Camera ON")
+        #window.video.setText("Turning Camera ON")
 
     # Detection method
-    detectorFace = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+    detectorFace = cv2.CascadeClassifier("Imagem\haarcascade_frontalface_default.xml")
 
     font = cv2.FONT_HERSHEY_DUPLEX
 
     largura, altura = 220, 220
+    classifier = cv2.face.LBPHFaceRecognizer_create()
+    classifier.read(r"C:\Users\perei\PycharmProjects\MEEC_1920_LI2_G1\Imagem\classifierLBPH.yml")  # classifier
 
     #camera = cv2.VideoCapture(0)
 
@@ -48,6 +50,7 @@ def rec_lbph_window():
         connected, img = camera.read()
         imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         facesDetected = detectorFace.detectMultiScale(imgGray, 1.3, 5)
+
         for (x, y, l, a) in facesDetected:
             imgFace = cv2.resize(imgGray[y:y + a, x:x + l], (largura, altura))
             cv2.rectangle(img, (x, y), (x + l, y + a), (0, 0, 255), 2)
@@ -65,14 +68,13 @@ def rec_lbph_window():
         if cv2.waitKey(1) == ord('q'):
             break
 
-
     camera.release()
     cv2.destroyAllWindows()
     return img
     #self.window.labelFrameOutput.setPixmap(img2pixmap(image))
 
 def start_clicked():
-    window.video.setText("Reconhecimento em andamento")
+    #window.video.setText("Reconhecimento em andamento")
     #qtimerFrame.start(50)
     rec_lbph_window()
 
@@ -95,8 +97,7 @@ window = uic.loadUi("mainwindow.ui")
 window.ButtonStart.clicked.connect(start_clicked)
 window.ButtonStop.clicked.connect(stop_clicked)
 
-
-window.video.setScaledContents(True)
+window.Video.setScaledContents(True)
 
 window.show()
 app.exec()
