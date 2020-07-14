@@ -31,17 +31,17 @@ CHUNK = 2048
 RECORD_SECONDS = 2.3
 
 scaler = StandardScaler()
-scaler_filename = "E:\\GoogleDrive\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_person.bin"
+scaler_filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_person.bin"
 scaler = pickle.load(open(scaler_filename,"rb"))
 scaler_cmd = StandardScaler()
-scaler_cmd_filename = "E:\\GoogleDrive\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_command.bin"
+scaler_cmd_filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\sc_model_command.bin"
 scaler_cmd = pickle.load(open(scaler_cmd_filename,"rb"))
 
 mlp = MLPClassifier()
-filename = "E:\\GoogleDrive\\MestradoEEC\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_person.bin"
+filename = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_person.bin"
 mlp = pickle.load(open(filename,"rb"))
 mlp_cmd = MLPClassifier()
-filename_cmd = "E:\\GoogleDrive\\MestradoEEC\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_command.bin"
+filename_cmd = "E:\\GoogleDrive\\MestradoEEC\\LabInt_2\\MEEC_1920_LI2_G1\\Treino\\trained_model_command.bin"
 mlp_cmd = pickle.load(open(filename_cmd,"rb"))
 
 grupo = ("G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "Desc")
