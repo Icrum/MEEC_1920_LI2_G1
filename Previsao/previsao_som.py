@@ -46,7 +46,8 @@ mlp_cmd = pickle.load(open(filename_cmd,"rb"))
 
 grupo = ("G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "Desc")
 command = ("parar", "recuar", "direita", "esquerda", "baixo", "centro", "cima", "avançar", "Desc")
-
+resultado = " "
+resultadoCmd = " "
 
 class AudioHandler(object):
     def __init__(self):
@@ -123,8 +124,8 @@ class MyWindow(QMainWindow):
             self.result, self.result_cmd = self.audio.mainloop()  # main operations with librosa
 
             if(type(self.result)==str):
-                print(type(self.result))
-                print(type(self.result_cmd))
+                # print(type(self.result))
+                # print(type(self.result_cmd))
                 self.user.setText(self.result)
                 self.comando.setText(self.result_cmd)
 
@@ -224,10 +225,10 @@ def prev_result (X_person, X_cmd):
     a = predictions.item(0)
 
     confianca = mlp.predict_proba(X_cmd)
-    if (confianca.item(0) > 0.6):
+    if (confianca.item(0) > 0.001):
         resultado = grupo[a]
     else:
-        resultado = "Desc"
+        resultado = " "
 
     print(resultado)
     print(confianca.item(0))
@@ -236,10 +237,10 @@ def prev_result (X_person, X_cmd):
     b = predictions_cmd.item(0)
 
     confiancacmd = mlp.predict_proba(X_cmd)
-    if (confiancacmd.item(1)>0.6):
+    if (confiancacmd.item(1)>0.001):
         resultadoCmd = command[b]
     else:
-        resultadoCmd = "Desc"
+        resultadoCmd = " "
 
     print(resultadoCmd)
     print(confiancacmd.item(1))
