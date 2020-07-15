@@ -1,21 +1,9 @@
 import sys
-import soundfile as sf
-from PyQt5 import QtWidgets, uic, QtGui
+from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtCore import QTimer, qVersion
 from Previsao.previsao_som import AudioHandler
-import numpy as nd
-
 import cv2
 import time
-import os
-from PIL import Image
-import numpy as np
-from PyQt5.QtWidgets import QFileDialog
-from sklearn.model_selection import train_test_split
-from sklearn import metrics
-# import pandas as pd
-import matplotlib.pyplot as plt
 
 classifier = cv2.face.LBPHFaceRecognizer_create()
 
@@ -30,10 +18,10 @@ def img2pixmap(image):
     return pixmap
 
 def img3pixmap(image):
-    # height, width, channel = image.shape
-    # bytesPerLine = channel * width
-    # qimage = QImage(image, 400, 100, QImage.Format_BGR888)
-    pixmap = QPixmap.fromImage(image)
+    height, width, channel = image.shape
+    bytesPerLine = channel * width
+    qimage = QImage(image.data, width, height, bytesPerLine, QImage.Format_BGR888)
+    pixmap = QPixmap.fromImage(qimage)
     return pixmap
 
 
@@ -74,11 +62,6 @@ def rec_lbph_window():
             cv2.putText(img, str(round(confidence, 2)), (x, y + (a + 70)), font, 1, (255, 0, 0))
 
         window.Video.setPixmap(img2pixmap(img))
-        # data, samplerate = sf.read("Previsao/temp.wav")
-        # # Pxx, freqs, bins, im = plt.specgram(data, NFFT=2048, Fs=samplerate, noverlap=900)
-        # graph = plt.plot(data)
-        # window.graph1.setPixmap(graph)
-        # # cv2.imshow("Recognition LBPH", img)
 
         # Previsão Som
         grupo, comando = ah.mainloop()
@@ -87,9 +70,10 @@ def rec_lbph_window():
         if (type(comando) == str) and comando != " ":
             window.Comando.setText(comando)
 
+        graf = cv2.imread("out.png")
+        window.graph1.setPixmap(img2pixmap(graf))
+
         time.sleep(0.1)
-
-
 
         if cv2.waitKey(1) == ord('q'):
             break
@@ -107,6 +91,7 @@ def start_clicked():
     rec_lbph_window()
 
 
+
 """
 def on_cameraOFF_clicked():
     qtimerFrame.stop()
@@ -117,6 +102,8 @@ def on_cameraOFF_clicked():
 
 def stop_clicked():
     window.close()
+    ah.stop()
+    sys.exit(0)
 
 
 camera = cv2.VideoCapture(0)
