@@ -38,7 +38,7 @@ class AudioAugmentation:
         return data_noise
 
     def shift(self, data, a):
-        return np.roll(data, 4410*a)
+        return np.roll(data, 441*a)
 
     def stretch(self, data, rate=1):
         input_length = 16000
