@@ -11,7 +11,7 @@ from Treino.AudioAugmentation import AudioAugmentation
 DATASET_PATH = "E:\GoogleDrive\MestradoEEC\LabInt_2\MEEC_1920_LI2_G1\AudioDatasetRec"
 SAMPLE_RATE = 44100
 grupo = []
-Naug = 11  # Maximo 11
+Naug = 1  # Maximo 11
 Segundos = 2.3
 aa = AudioAugmentation()
 
