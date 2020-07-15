@@ -67,5 +67,6 @@ def plot(sound):
     plt.show()
 
 if __name__ == "__main__":
+    print(sd.query_devices())
     stream()
 

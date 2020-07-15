@@ -71,7 +71,7 @@ def rec_lbph_window():
             window.Comando.setText(comando)
 
         graf = cv2.imread("out.png")
-        window.graph1.setPixmap(img2pixmap(graf))
+        window.graph1.setPixmap(img3pixmap(graf))
 
         time.sleep(0.1)
 

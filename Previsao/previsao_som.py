@@ -134,7 +134,7 @@ def prev_result (X_person, X_cmd):
     a = predictions.item(0)
 
     confianca = mlp.predict_proba(X_cmd)
-    if (confianca.item(0) > 0.001):
+    if (confianca.item(a) > 0.01):
         resultado = grupo[a]
     else:
         resultado = " "
@@ -146,7 +146,7 @@ def prev_result (X_person, X_cmd):
     b = predictions_cmd.item(0)
 
     confiancacmd = mlp.predict_proba(X_cmd)
-    if (confiancacmd.item(1)>0.001):
+    if (confiancacmd.item(b)>0.01):
         resultadoCmd = command[b]
     else:
         resultadoCmd = " "
