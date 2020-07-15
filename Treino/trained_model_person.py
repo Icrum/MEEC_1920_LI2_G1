@@ -36,6 +36,7 @@ def procdados(dataset_path, num_mfcc=13, n_fft=2048, hop_length=512):
                 data_shift = aa.shift(data, a)
                 mfcc = np.mean(librosa.feature.mfcc(data_shift, sr=SAMPLE_RATE, n_mfcc=num_mfcc, n_fft=n_fft,
                                                     hop_length=hop_length).T, axis=0)
+
                 x.append(mfcc)
                 y.append(i - 1)
 

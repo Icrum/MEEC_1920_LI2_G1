@@ -73,7 +73,7 @@ def rec_lbph_window():
         graf = cv2.imread("out.png")
         window.graph1.setPixmap(img3pixmap(graf))
 
-        time.sleep(0.1)
+        time.sleep(0.2)
 
         if cv2.waitKey(1) == ord('q'):
             break
